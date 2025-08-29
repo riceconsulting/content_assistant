@@ -14,20 +14,24 @@ interface TopicPanelProps {
   setPreferences: React.Dispatch<React.SetStateAction<TopicPreferences>>;
   onGenerate: () => void;
   isLoading: boolean;
+  generationsLeft: number;
+  generationLimit: number;
 }
 
-const TopicPanel: React.FC<TopicPanelProps> = ({ preferences, setPreferences, onGenerate, isLoading }) => {
+const TopicPanel: React.FC<TopicPanelProps> = ({ preferences, setPreferences, onGenerate, isLoading, generationsLeft, generationLimit }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setPreferences(prev => ({ ...prev, [name]: value }));
   };
 
+  const hasReachedLimit = generationsLeft <= 0;
+
   return (
-    <div className="bg-slate-800/50 p-6 rounded-xl border border-slate-700 flex flex-col gap-6 h-full">
-      <h2 className="text-xl font-semibold text-slate-100">Generate Topic Ideas</h2>
+    <div className="bg-surface-light dark:bg-surface-dark/50 p-6 rounded-xl border border-border-light dark:border-border-dark flex flex-col gap-6 h-full">
+      <h2 className="text-xl font-semibold text-text-primary-light dark:text-text-primary-dark">Generate Topic Ideas</h2>
       
       <div>
-        <label htmlFor="industry" className="block text-sm font-medium text-slate-300 mb-2">
+        <label htmlFor="industry" className="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-2">
           What is your Industry or Niche?
         </label>
         <input
@@ -37,14 +41,14 @@ const TopicPanel: React.FC<TopicPanelProps> = ({ preferences, setPreferences, on
           value={preferences.industry}
           onChange={handleInputChange}
           placeholder="e.g., SaaS, Home Gardening, Fitness"
-          className="w-full bg-slate-700 border border-slate-600 rounded-md p-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm transition"
+          className="w-full bg-background-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-md p-3 text-text-primary-light dark:text-text-primary-dark placeholder-text-secondary-light dark:placeholder-text-secondary-dark focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:border-transparent sm:text-sm transition"
           aria-label="Industry or Niche"
         />
       </div>
 
       <Dropdown
         label="Target Audience"
-        icon={<AudienceIcon className="w-5 h-5 text-slate-400" />}
+        icon={<AudienceIcon className="w-5 h-5 text-text-secondary-light dark:text-text-secondary-dark" />}
         value={preferences.audience}
         onChange={(e) => setPreferences(prev => ({ ...prev, audience: e.target.value }))}
         options={AUDIENCE_OPTIONS}
@@ -52,7 +56,7 @@ const TopicPanel: React.FC<TopicPanelProps> = ({ preferences, setPreferences, on
 
       <Dropdown
         label="Content Angle"
-        icon={<AngleIcon className="w-5 h-5 text-slate-400" />}
+        icon={<AngleIcon className="w-5 h-5 text-text-secondary-light dark:text-text-secondary-dark" />}
         value={preferences.angle}
         onChange={(e) => setPreferences(prev => ({ ...prev, angle: e.target.value }))}
         options={CONTENT_ANGLE_OPTIONS}
@@ -60,7 +64,7 @@ const TopicPanel: React.FC<TopicPanelProps> = ({ preferences, setPreferences, on
 
       <Dropdown
         label="Engagement Hook"
-        icon={<HookIcon className="w-5 h-5 text-slate-400" />}
+        icon={<HookIcon className="w-5 h-5 text-text-secondary-light dark:text-text-secondary-dark" />}
         value={preferences.hook}
         onChange={(e) => setPreferences(prev => ({ ...prev, hook: e.target.value }))}
         options={HOOK_STYLE_OPTIONS}
@@ -68,7 +72,7 @@ const TopicPanel: React.FC<TopicPanelProps> = ({ preferences, setPreferences, on
 
       <Dropdown
         label="Number of Ideas"
-        icon={<LightbulbIcon className="w-5 h-5 text-slate-400" />}
+        icon={<LightbulbIcon className="w-5 h-5 text-text-secondary-light dark:text-text-secondary-dark" />}
         value={preferences.numIdeas}
         onChange={(e) => setPreferences(prev => ({ ...prev, numIdeas: e.target.value }))}
         options={NUM_IDEAS_OPTIONS}
@@ -77,12 +81,15 @@ const TopicPanel: React.FC<TopicPanelProps> = ({ preferences, setPreferences, on
       <div className="mt-auto pt-4">
         <button
           onClick={onGenerate}
-          disabled={isLoading || !preferences.industry.trim()}
-          className="w-full flex items-center justify-center bg-cyan-600 hover:bg-cyan-700 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 shadow-lg shadow-cyan-500/20"
+          disabled={isLoading || !preferences.industry.trim() || hasReachedLimit}
+          className="w-full flex items-center justify-center bg-primary-light dark:bg-primary-dark hover:brightness-95 disabled:bg-border-light dark:disabled:bg-border-dark disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 shadow-lg shadow-primary-light/20 dark:shadow-primary-dark/20 active:scale-95"
           aria-label="Generate topic ideas based on selected preferences"
         >
-          {isLoading ? <Spinner /> : 'Generate Ideas'}
+          {isLoading ? <Spinner /> : (hasReachedLimit ? 'Daily Limit Reached' : 'Generate Ideas')}
         </button>
+        <p className="text-xs text-center text-text-secondary-light dark:text-text-secondary-dark mt-2">
+            {generationsLeft} generations remaining today.
+        </p>
       </div>
     </div>
   );

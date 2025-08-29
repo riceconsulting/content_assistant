@@ -1,15 +1,35 @@
-
 import React from 'react';
-import SparklesIcon from './icons/SparklesIcon';
+import ThemeToggle from './ThemeToggle';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+    theme: 'light' | 'dark';
+    toggleTheme: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
   return (
-    <header className="p-4 sm:p-6 border-b border-slate-700/50">
-      <div className="max-w-7xl mx-auto flex items-center justify-center sm:justify-start">
-        <SparklesIcon className="w-8 h-8 text-cyan-400" />
-        <h1 className="ml-3 text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-slate-200 to-slate-400 text-transparent bg-clip-text">
-          AI Content Generator
-        </h1>
+    <header className="bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark sticky top-0 z-40 p-3 sm:p-4">
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="flex items-center">
+            <a 
+              href="https://riceai.net" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="flex items-center space-x-3 group"
+            >
+              <img 
+                src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=375,fit=crop,q=95/AGB2yyJJKXfD527r/rice-ai-consulting-2-AoPWxvnWOju2GwOz.png" 
+                alt="RICE AI Consulting Logo" 
+                className="h-16 w-16 object-contain" 
+              />
+            </a>
+            <h1 className="ml-4 text-xl sm:text-2xl font-bold tracking-tight text-text-primary-light dark:text-text-primary-dark">
+              RICE AI - Content Generator
+            </h1>
+        </div>
+        <div className="flex items-center gap-2">
+            <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+        </div>
       </div>
     </header>
   );

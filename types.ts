@@ -1,7 +1,10 @@
+
 export interface DropdownOption {
   value: string;
   label: string;
 }
+
+export type ReferenceType = 'none' | 'any' | 'professional';
 
 export interface ContentPreferences {
   topic: string;
@@ -9,6 +12,7 @@ export interface ContentPreferences {
   tone: string;
   wordCount: string;
   generateHashtags: boolean;
+  referenceType: ReferenceType;
   writerPersona: string;
   promotionLevel: string;
   creatorName: string;
@@ -32,4 +36,6 @@ export interface ChatMessage {
   role: 'user' | 'model';
   content: string;
   hashtags?: string;
+  references?: string;
+  wordCount?: number;
 }
